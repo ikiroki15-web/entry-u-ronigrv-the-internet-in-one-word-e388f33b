@@ -23,9 +23,11 @@ const OUT_PATH = "/output/entry.txt";
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 30;
 
-// A single word has no white space anywhere in it.
+// A single word has no white space anywhere in it, and for this entry
+// the word is plain letters only: no digits, punctuation or control
+// characters, so nothing in it can read as a second token.
 function isSingleWord(text: string): boolean {
-  return text.length > 0 && !/\s/.test(text);
+  return text.length > 0 && !/\s/.test(text) && /^[A-Za-z]+$/.test(text);
 }
 
 // Length is counted in characters (code points), matching the gate.
@@ -41,7 +43,9 @@ function main(): void {
     throw new Error(`Invalid entry word: ${JSON.stringify(WORD)}`);
   }
   mkdirSync(dirname(OUT_PATH), { recursive: true });
-  writeFileSync(OUT_PATH, WORD, "utf8");
+  // Write the word alone: no trailing newline, so the file holds exactly
+  // the entry and nothing else.
+  writeFileSync(OUT_PATH, WORD, { encoding: "utf8" });
 }
 
 main();
